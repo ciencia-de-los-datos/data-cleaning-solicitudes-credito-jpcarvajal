@@ -14,18 +14,15 @@ def clean_data():
 
     df = pd.read_csv("solicitudes_credito.csv", sep=";")
     
+    df.dropna(inplace=(True))
+    df.drop(['Unnamed: 0'], axis=1, inplace=(True))
 
     #SEXO
-    sexo_df = pd.DataFrame({'sexo':list(df.sexo)})
-    sexo_df.sexo = sexo_df.sexo.str.lower()
-    sexo_df = sexo_df.drop_duplicates()
     df.sexo = df.sexo.str.lower()
     #print(df.sexo.value_counts())
 
     #EMPRENDIMIENTO
     df.tipo_de_emprendimiento = df.tipo_de_emprendimiento.str.lower()
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! falta
-    #print('emprendimiento '+str(len(df[df.tipo_de_emprendimiento.isna()])))
     #print(df.tipo_de_emprendimiento.value_counts())
 
     #IDEA DE NEGOCIO
@@ -33,8 +30,6 @@ def clean_data():
     df.idea_negocio = df.idea_negocio.str.replace("-","_")
     df.idea_negocio = df.idea_negocio.str.replace(" ","_")
     df.idea_negocio = df.idea_negocio.str.rstrip("_")
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! falta
-    #print('barrio '+str(len(df[df.barrio.isna()])))
     #df=df.sort_values('idea_negocio')
     #print(df.idea_negocio.value_counts())
 
@@ -50,7 +45,6 @@ def clean_data():
     #print(df.estrato.value_counts())
 
     #COMUNA
-    #print('comuna '+str(len(df[(df.comuna_ciudadano.isnull())])))
     df = df.dropna(axis=0, subset=['comuna_ciudadano'])
     #print(df[(df.comuna_ciudadano.isnull())])
 
@@ -65,12 +59,17 @@ def clean_data():
     print(df.fecha_de_beneficio.unique()) """
 
     #MONTO DEL CREDITO
-    df.monto_del_credito = df.monto_del_credito.str.replace(r"[^\d\.]", "", regex = True)
+    df.monto_del_credito = df.monto_del_credito.str.replace(r"[^\d\.]", "", regex = True).astype(float)
     #print(df.monto_del_credito.value_counts())
 
     #LINEA DE CREDITO
-    print(df.línea_credito.value_counts())
+    df.línea_credito = df.línea_credito.str.lower()
+    df.línea_credito = df.línea_credito.str.replace("-","_")
+    df.línea_credito = df.línea_credito.str.replace(" ","_")
+    df.línea_credito = df.línea_credito.str.rstrip("_")
+    #print(df.línea_credito.value_counts())
 
+    df.drop_duplicates(inplace=(True))
     return df
 
 #print(clean_data())
